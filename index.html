@@ -1,156 +1,400 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>YouTube Downloader - Modern</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>YouTube Downloader — Made by You</title>
+<link rel="icon" href="data:;base64,iVBORw0KGgo=">
 <style>
-    body {
-        font-family: 'Segoe UI', sans-serif;
-        background: #0d1117;
-        color: white;
-        margin: 0;
-        padding: 30px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    .container {
-        max-width: 500px;
-        width: 90%;
-        background: #161b22;
-        padding: 25px;
-        border-radius: 16px;
-        box-shadow: 0 0 25px #00000045;
-    }
-    input {
-        width: 100%;
-        padding: 12px;
-        border-radius: 10px;
-        border: 1px solid #30363d;
-        background: #0d1117;
-        color: white;
-        margin-top: 10px;
-        margin-bottom: 15px;
-        font-size: 16px;
-    }
-    button {
-        width: 100%;
-        padding: 12px;
-        background: #238636;
-        border-radius: 10px;
-        border: none;
-        color: white;
-        cursor: pointer;
-        font-size: 17px;
-        transition: 0.2s;
-    }
-    button:hover {
-        background: #2ea043;
-    }
-    .card {
-        background: #161b22;
-        padding: 20px;
-        margin-top: 25px;
-        border-radius: 15px;
-        display: none;
-    }
-    .thumbnail {
-        width: 100%;
-        border-radius: 12px;
-        margin-bottom: 15px;
-    }
-    .loading {
-        margin-top: 20px;
-        display: none;
-        font-size: 16px;
-        text-align: center;
-    }
-    a {
-        color: #58a6ff;
-        text-decoration: none;
-    }
-    .btn {
-        display: block;
-        padding: 10px;
-        margin: 8px 0;
-        background: #21262d;
-        border-radius: 10px;
-        text-align: center;
-    }
+  :root{
+    --bg:#0b0f12; --card:#0f1417; --muted:#9aa6b2; --accent:#2ea043; --accent-2:#58a6ff;
+    --glass: rgba(255,255,255,0.02);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:40px 16px;
+    font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background:radial-gradient(1200px 600px at 10% 10%, rgba(40,60,80,0.04), transparent),
+               linear-gradient(180deg,#071014 0%, #0b0f12 100%);
+    color:#e6eef3;
+  }
+
+  .wrap{
+    width:100%;
+    max-width:820px;
+  }
+
+  header{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:18px;
+  }
+  .brand{
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+  .logo{
+    width:44px;height:44px;border-radius:10px;
+    background:linear-gradient(135deg,#ff8a00,#ff3d00);
+    display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:20px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.5);
+  }
+  h1{font-size:20px;margin:0}
+  p.lead{margin:0;color:var(--muted);font-size:13px}
+
+  .card{
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:14px;padding:18px;border:1px solid rgba(255,255,255,0.03);
+    box-shadow: 0 6px 30px rgba(2,6,12,0.6);
+  }
+
+  .top{
+    display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;
+  }
+
+  input[type="text"]{
+    flex:1;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);
+    background:#071016;color:var(--muted);outline:none;font-size:15px;
+    color:#eaf3ff;
+  }
+  .btn{
+    padding:12px 16px;border-radius:10px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-weight:600;
+  }
+  .btn:active{transform:translateY(1px)}
+
+  .row{
+    display:flex;gap:12px;align-items:center;
+  }
+
+  #result{
+    margin-top:18px;display:none;
+  }
+  .video-card{
+    display:flex;gap:16px;align-items:flex-start;
+  }
+  .thumb{
+    width:200px;max-width:40%;border-radius:10px; background:#062026; object-fit:cover;
+  }
+  .meta{flex:1}
+  .meta h2{margin:0 0 6px 0;font-size:18px}
+  .meta .sub{color:var(--muted);font-size:13px;margin-bottom:12px}
+  .list{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+  .item{
+    display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:var(--glass);
+    border:1px solid rgba(255,255,255,0.02);
+  }
+  .item small{color:var(--muted)}
+  .dl{
+    display:inline-block;padding:8px 12px;border-radius:8px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.03);
+    text-decoration:none;color:var(--accent-2);font-weight:600;
+  }
+  .muted{color:var(--muted);font-size:13px}
+
+  .loading{margin-top:10px;color:var(--muted)}
+  .error{margin-top:10px;color:#ff8080;background:rgba(255,128,128,0.04);padding:8px;border-radius:8px}
+
+  @media(max-width:720px){
+    .video-card{flex-direction:column}
+    .thumb{width:100%;max-width:100%}
+  }
+
+  footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
+  a.smalllink{color:var(--muted);text-decoration:underline}
 </style>
 </head>
-
 <body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">YT</div>
+        <div>
+          <h1>YouTube Downloader</h1>
+          <p class="lead">Masukkan link YouTube → pilih resolusi → klik Download. Gratis & tanpa server.</p>
+        </div>
+      </div>
+    </header>
 
-<div class="container">
-    <h2 style="text-align:center;">🔥 YouTube Downloader</h2>
-    <p style="text-align:center;">Masukkan link YouTube di bawah:</p>
+    <div class="card">
+      <div class="top row">
+        <input id="inputUrl" type="text" placeholder="Contoh: https://www.youtube.com/watch?v=XXXX atau https://youtu.be/XXXX" />
+        <button id="btnFetch" class="btn">Cari Video</button>
+      </div>
 
-    <input type="text" id="url" placeholder="https://www.youtube.com/watch?v=xxxx" />
+      <div id="loading" class="loading" style="display:none">⏳ Mengambil data...</div>
+      <div id="error" class="error" style="display:none"></div>
 
-    <button onclick="startDownload()">Cari Video</button>
-
-    <div class="loading" id="loading">⏳ Mengambil data video...</div>
-
-    <div class="card" id="card">
-        <img id="thumb" class="thumbnail">
-        <h3 id="title"></h3>
-
-        <h4>🎥 Download Video</h4>
-        <div id="videoList"></div>
-
-        <h4>🎵 Download Audio</h4>
-        <div id="audioList"></div>
+      <div id="result"></div>
     </div>
-</div>
+
+    <footer style="margin-top:12px">
+      Built with ❤️ — gunakan hanya untuk konten yang bukan ber-DRM/berlisensi. Kunjungi <a class="smalllink" href="https://github.com/MadeGIA24/youtube-downloader" target="_blank">repo</a> (opsional).
+    </footer>
+  </div>
 
 <script>
-async function startDownload() {
-    const url = document.getElementById("url").value;
-    const loading = document.getElementById("loading");
-    const card = document.getElementById("card");
+/*
+  Single-file YouTube downloader UI.
+  Uses Piped API: https://pipedapi.kavin.rocks/streams/{videoId}
+  If API fails, shows informative error.
 
-    card.style.display = "none";
-    loading.style.display = "block";
+  Notes:
+  - This client only fetches stream URLs. Browser may block some direct downloads via CORS or content-disposition.
+  - Some streams may be DASH or progressive; clicking opens the direct URL in a new tab.
+*/
 
-    const videoID = url.split("v=")[1]?.split("&")[0];
+const input = document.getElementById('inputUrl');
+const btn = document.getElementById('btnFetch');
+const loadingEl = document.getElementById('loading');
+const resultEl = document.getElementById('result');
+const errorEl = document.getElementById('error');
 
-    if (!videoID) {
-        loading.innerHTML = "❌ URL tidak valid!";
-        return;
+// Primary Piped API endpoint (public free)
+const API_CANDIDATES = [
+  'https://pipedapi.kavin.rocks/streams/',         // common public instance
+  'https://piped.video/api/v1/streams/',          // another instance (may or may not work)
+  'https://piped.video/api/v1/streams/'           // duplicate fallback
+];
+
+function extractVideoID(url){
+  if(!url) return null;
+  // trim
+  url = url.trim();
+  // if only ID provided
+  if(/^[A-Za-z0-9_-]{11}$/.test(url)) return url;
+  try{
+    const u = new URL(url.startsWith('http') ? url : 'https://'+url);
+    // youtube.com/watch?v=...
+    if(u.hostname.includes('youtube.com')){
+      return new URLSearchParams(u.search).get('v');
     }
-
-    const api = `https://pipedapi.kavin.rocks/streams/${videoID}`;
-
-    try {
-        const data = await fetch(api).then(r => r.json());
-
-        document.getElementById("thumb").src = `https://img.youtube.com/vi/${videoID}/maxresdefault.jpg`;
-        document.getElementById("title").innerText = data.title;
-
-        let videoList = "";
-        data.videoStreams.slice(0, 8).forEach(v => {
-            videoList += `<a class="btn" target="_blank" href="${v.url}">${v.quality} (${v.format})</a>`;
-        });
-
-        let audioList = "";
-        data.audioStreams.slice(0, 5).forEach(a => {
-            audioList += `<a class="btn" target="_blank" href="${a.url}">${a.bitrate} kbps</a>`;
-        });
-
-        document.getElementById("videoList").innerHTML = videoList;
-        document.getElementById("audioList").innerHTML = audioList;
-
-        loading.style.display = "none";
-        card.style.display = "block";
-
-    } catch (e) {
-        loading.innerHTML = "❌ Terjadi kesalahan saat mengambil data!";
+    // youtu.be/ID
+    if(u.hostname.includes('youtu.be')){
+      return u.pathname.replace('/','');
     }
+    // handle short forms like youtube.com/shorts/ID
+    if(u.pathname && (u.pathname.includes('/shorts/') || u.pathname.includes('/embed/'))){
+      const seg = u.pathname.split('/');
+      return seg.pop() || seg.pop();
+    }
+    return null;
+  }catch(e){
+    return null;
+  }
 }
-</script>
 
+async function fetchFromCandidates(id){
+  let lastErr = null;
+  for(const base of API_CANDIDATES){
+    const url = base + id;
+    try{
+      const r = await fetch(url, {cache:'no-store'});
+      if(!r.ok){
+        lastErr = `API ${base} returned ${r.status}`;
+        continue;
+      }
+      const json = await r.json();
+      // basic validation
+      if(json && (json.videoStreams || json.audioStreams || json.title)){
+        return json;
+      } else {
+        lastErr = 'Response not contain streams';
+      }
+    }catch(err){
+      lastErr = err.message || String(err);
+      // try next
+    }
+  }
+  throw new Error(lastErr || 'Failed to fetch from Piped API');
+}
+
+function makeItemLabelVideo(v){
+  const q = v.quality || `${v.width||'?' }x${v.height||'?'}`;
+  const fmt = v.format || v.container || '';
+  const size = v.size ? ` • ${Math.round(v.size/1024/1024)} MB` : '';
+  return `${q} ${fmt}${size}`;
+}
+
+function makeItemLabelAudio(a){
+  return `${a.bitrate || '??'} kbps ${a.format || a.container || ''}`;
+}
+
+function clearResult(){
+  resultEl.innerHTML = '';
+  resultEl.style.display = 'none';
+  errorEl.style.display = 'none';
+}
+
+function showError(msg){
+  errorEl.style.display = 'block';
+  errorEl.textContent = msg;
+  loadingEl.style.display = 'none';
+  resultEl.style.display = 'none';
+}
+
+function createDownloadLink(url, text){
+  const a = document.createElement('a');
+  a.className = 'dl';
+  a.target = '_blank';
+  a.rel = 'noopener noreferrer';
+  a.href = url;
+  a.textContent = text || 'Download';
+  return a;
+}
+
+btn.addEventListener('click', async ()=>{
+  clearResult();
+  const url = input.value;
+  const id = extractVideoID(url);
+  if(!id){
+    showError('URL tidak valid — pastikan link YouTube lengkap atau masukkan ID video (11 karakter).');
+    return;
+  }
+
+  loadingEl.style.display = 'block';
+  loadingEl.textContent = '⏳ Mengambil data dari API...';
+  try{
+    const data = await fetchFromCandidates(id);
+    renderResult(id, data);
+    loadingEl.style.display = 'none';
+  }catch(err){
+    showError('Gagal mengambil data: ' + err.message + '. Coba lagi atau pakai instance Piped lain.');
+  }
+});
+
+function renderResult(videoID, data){
+  resultEl.style.display = 'block';
+  resultEl.innerHTML = '';
+
+  // build card
+  const card = document.createElement('div');
+  card.className = 'video-card';
+
+  // thumbnail (use maxres default; fallback to hqdefault)
+  const img = document.createElement('img');
+  img.className = 'thumb';
+  img.alt = data.title || 'thumbnail';
+  img.src = `https://img.youtube.com/vi/${videoID}/maxresdefault.jpg`;
+  img.onerror = ()=> img.src = `https://img.youtube.com/vi/${videoID}/hqdefault.jpg`;
+
+  // meta
+  const meta = document.createElement('div');
+  meta.className = 'meta';
+  const title = document.createElement('h2');
+  title.textContent = data.title || 'Unknown title';
+  const sub = document.createElement('div');
+  sub.className = 'sub';
+  if(data.author) sub.textContent = data.author.name || data.author;
+  else sub.textContent = data.uploader || '';
+
+  // description / info
+  const info = document.createElement('div');
+  info.className = 'muted';
+  const duration = data.duration || data.length || null;
+  if(duration){
+    const sec = Math.round(duration);
+    const mm = Math.floor(sec/60).toString().padStart(2,'0');
+    const ss = (sec%60).toString().padStart(2,'0');
+    info.textContent = `Durasi: ${mm}:${ss} • ${data.views ? (data.views + ' views') : ''}`;
+  } else {
+    info.textContent = data.views ? (data.views + ' views') : '';
+  }
+
+  meta.appendChild(title);
+  meta.appendChild(sub);
+  meta.appendChild(info);
+
+  // video streams list
+  const vtitle = document.createElement('h4');
+  vtitle.style.marginTop = '12px';
+  vtitle.textContent = '🎥 Video';
+  const vlist = document.createElement('div');
+  vlist.className = 'list';
+
+  const videoStreams = (data.videoStreams || []).slice().sort((a,b)=>{
+    // prefer higher height
+    return (b.height||0) - (a.height||0) || (b.quality && a.quality ? b.quality.localeCompare(a.quality) : 0);
+  });
+
+  if(videoStreams.length === 0){
+    const n = document.createElement('div'); n.className='muted'; n.textContent = 'No video streams found';
+    vlist.appendChild(n);
+  } else {
+    videoStreams.forEach(v=>{
+      const it = document.createElement('div'); it.className='item';
+      const left = document.createElement('div');
+      left.innerHTML = `<strong>${v.quality || (v.height ? v.height+'p' : 'video')}</strong><div class="muted">${v.format || v.container || ''}</div>`;
+      const right = document.createElement('div');
+      // create download link; some urls might be null => skip
+      if(v.url){
+        const a = createDownloadLink(v.url, makeItemLabelVideo(v));
+        right.appendChild(a);
+      } else {
+        const s = document.createElement('small'); s.textContent='no direct url';
+        right.appendChild(s);
+      }
+      it.appendChild(left);
+      it.appendChild(right);
+      vlist.appendChild(it);
+    });
+  }
+
+  // audio streams list
+  const atitle = document.createElement('h4');
+  atitle.style.marginTop='12px';
+  atitle.textContent = '🎵 Audio';
+  const alist = document.createElement('div'); alist.className='list';
+  const audioStreams = (data.audioStreams || []).slice().sort((a,b)=> (b.bitrate||0)-(a.bitrate||0));
+  if(audioStreams.length === 0){
+    const n = document.createElement('div'); n.className='muted'; n.textContent = 'No audio streams found';
+    alist.appendChild(n);
+  } else {
+    audioStreams.forEach(a=>{
+      const it = document.createElement('div'); it.className='item';
+      const left = document.createElement('div');
+      left.innerHTML = `<strong>${a.bitrate ? a.bitrate+' kbps' : ''}</strong><div class="muted">${a.format || a.container || ''}</div>`;
+      const right = document.createElement('div');
+      if(a.url){
+        const link = createDownloadLink(a.url, makeItemLabelAudio(a));
+        right.appendChild(link);
+      } else {
+        const s = document.createElement('small'); s.textContent='no direct url';
+        right.appendChild(s);
+      }
+      it.appendChild(left);
+      it.appendChild(right);
+      alist.appendChild(it);
+    });
+  }
+
+  // append meta + lists
+  meta.appendChild(vtitle);
+  meta.appendChild(vlist);
+  meta.appendChild(atitle);
+  meta.appendChild(alist);
+
+  card.appendChild(img);
+  card.appendChild(meta);
+  resultEl.appendChild(card);
+
+  // extra tips
+  const tips = document.createElement('div');
+  tips.style.marginTop = '12px';
+  tips.className = 'muted';
+  tips.innerHTML = 'Tip: Jika file tidak otomatis ter-download, klik kanan → "Save link as..." pada tombol Download. Beberapa link mungkin dibatasi oleh kebijakan CORS atau server.';
+  resultEl.appendChild(tips);
+}
+
+/* handy: support pressing Enter in input */
+input.addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter') btn.click();
+});
+</script>
 </body>
 </html>
