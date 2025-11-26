@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>YouTube Downloader - Modern</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background: #0d1117;
+        color: white;
+        margin: 0;
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .container {
+        max-width: 500px;
+        width: 90%;
+        background: #161b22;
+        padding: 25px;
+        border-radius: 16px;
+        box-shadow: 0 0 25px #00000045;
+    }
+    input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #30363d;
+        background: #0d1117;
+        color: white;
+        margin-top: 10px;
+        margin-bottom: 15px;
+        font-size: 16px;
+    }
+    button {
+        width: 100%;
+        padding: 12px;
+        background: #238636;
+        border-radius: 10px;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 17px;
+        transition: 0.2s;
+    }
+    button:hover {
+        background: #2ea043;
+    }
+    .card {
+        background: #161b22;
+        padding: 20px;
+        margin-top: 25px;
+        border-radius: 15px;
+        display: none;
+    }
+    .thumbnail {
+        width: 100%;
+        border-radius: 12px;
+        margin-bottom: 15px;
+    }
+    .loading {
+        margin-top: 20px;
+        display: none;
+        font-size: 16px;
+        text-align: center;
+    }
+    a {
+        color: #58a6ff;
+        text-decoration: none;
+    }
+    .btn {
+        display: block;
+        padding: 10px;
+        margin: 8px 0;
+        background: #21262d;
+        border-radius: 10px;
+        text-align: center;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2 style="text-align:center;">🔥 YouTube Downloader</h2>
+    <p style="text-align:center;">Masukkan link YouTube di bawah:</p>
+
+    <input type="text" id="url" placeholder="https://www.youtube.com/watch?v=xxxx" />
+
+    <button onclick="startDownload()">Cari Video</button>
+
+    <div class="loading" id="loading">⏳ Mengambil data video...</div>
+
+    <div class="card" id="card">
+        <img id="thumb" class="thumbnail">
+        <h3 id="title"></h3>
+
+        <h4>🎥 Download Video</h4>
+        <div id="videoList"></div>
+
+        <h4>🎵 Download Audio</h4>
+        <div id="audioList"></div>
+    </div>
+</div>
+
+<script>
+async function startDownload() {
+    const url = document.getElementById("url").value;
+    const loading = document.getElementById("loading");
+    const card = document.getElementById("card");
+
+    card.style.display = "none";
+    loading.style.display = "block";
+
+    const videoID = url.split("v=")[1]?.split("&")[0];
+
+    if (!videoID) {
+        loading.innerHTML = "❌ URL tidak valid!";
+        return;
+    }
+
+    const api = `https://pipedapi.kavin.rocks/streams/${videoID}`;
+
+    try {
+        const data = await fetch(api).then(r => r.json());
+
+        document.getElementById("thumb").src = `https://img.youtube.com/vi/${videoID}/maxresdefault.jpg`;
+        document.getElementById("title").innerText = data.title;
+
+        let videoList = "";
+        data.videoStreams.slice(0, 8).forEach(v => {
+            videoList += `<a class="btn" target="_blank" href="${v.url}">${v.quality} (${v.format})</a>`;
+        });
+
+        let audioList = "";
+        data.audioStreams.slice(0, 5).forEach(a => {
+            audioList += `<a class="btn" target="_blank" href="${a.url}">${a.bitrate} kbps</a>`;
+        });
+
+        document.getElementById("videoList").innerHTML = videoList;
+        document.getElementById("audioList").innerHTML = audioList;
+
+        loading.style.display = "none";
+        card.style.display = "block";
+
+    } catch (e) {
+        loading.innerHTML = "❌ Terjadi kesalahan saat mengambil data!";
+    }
+}
+</script>
+
+</body>
+</html>
